@@ -42,7 +42,7 @@ private class FrotaMapaControllerTest {
             Assert.areEqual(new Set<String>{ 'EMR0T00', 'PAR4D00', 'SEM5N00' }, views.keySet());
             Assert.areEqual('EM_ROTA', views.get('EMR0T00').status);
             Assert.areEqual('PARADA', views.get('PAR4D00').status);
-            Assert.areEqual('SEM_SINAL', views.get('SEM5N00').status, 'Velocidade antiga não vale: sem sinal há 3 h');
+            Assert.areEqual('SEM_SINAL', views.get('SEM5N00').status, 'Estava andando e sumiu há 3 h');
         }
     }
 
@@ -106,13 +106,23 @@ private class FrotaMapaControllerTest {
     @IsTest
     static void statusDeveRespeitarLimitesDeSinalEVelocidade() {
         System.runAs(FrotaTestData.gestor()) {
-            Datetime limite = Datetime.now().addMinutes(-FrotaMapaController.MINUTOS_SEM_SINAL);
+            Datetime agora = Datetime.newInstanceGmt(2026, 10, 29, 15, 0, 0);
+            Datetime limiteEmRota = agora.addMinutes(-FrotaMapaController.MINUTOS_SEM_SINAL_EM_ROTA);
+            Datetime limiteParada = agora.addMinutes(-FrotaMapaController.MINUTOS_SEM_SINAL_PARADA);
             Decimal minima = FrotaMapaController.VELOCIDADE_MINIMA_EM_ROTA;
+            Decimal parada = minima - 0.1;
 
-            Assert.areEqual('SEM_SINAL', FrotaMapaController.calcularStatus(null, 50, limite));
-            Assert.areEqual('SEM_SINAL', FrotaMapaController.calcularStatus(limite.addSeconds(-1), 50, limite));
-            Assert.areEqual('EM_ROTA', FrotaMapaController.calcularStatus(limite, minima, limite));
-            Assert.areEqual('PARADA', FrotaMapaController.calcularStatus(limite, minima - 0.1, limite));
+            Assert.areEqual('SEM_SINAL', FrotaMapaController.calcularStatus(null, 50, agora));
+            Assert.areEqual('SEM_SINAL', FrotaMapaController.calcularStatus(null, 0, agora));
+
+            // Em movimento: 15 min de silêncio já é sinal perdido.
+            Assert.areEqual('EM_ROTA', FrotaMapaController.calcularStatus(limiteEmRota, minima, agora));
+            Assert.areEqual('SEM_SINAL', FrotaMapaController.calcularStatus(limiteEmRota.addSeconds(-1), minima, agora));
+
+            // Parada: celular em segundo plano poupa bateria; tolera até 2 h sem posição.
+            Assert.areEqual('PARADA', FrotaMapaController.calcularStatus(agora.addMinutes(-44), parada, agora), 'Caso real: 44 min parado em segundo plano');
+            Assert.areEqual('PARADA', FrotaMapaController.calcularStatus(limiteParada, parada, agora));
+            Assert.areEqual('SEM_SINAL', FrotaMapaController.calcularStatus(limiteParada.addSeconds(-1), parada, agora));
         }
     }
 

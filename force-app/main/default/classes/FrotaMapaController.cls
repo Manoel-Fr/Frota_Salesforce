@@ -3,8 +3,14 @@
  * Pedido (Order) devolve só a carreta daquele registro.
  */
 public with sharing class FrotaMapaController {
+    /**
+     * Celular parado em segundo plano para de enviar posição para poupar bateria, então o silêncio tolerado
+     * depende de como a carreta estava na última posição: andando, 15 min já é sinal perdido; parada, 2 h.
+     */
     @TestVisible
-    private static final Integer MINUTOS_SEM_SINAL = 15;
+    private static final Integer MINUTOS_SEM_SINAL_EM_ROTA = 15;
+    @TestVisible
+    private static final Integer MINUTOS_SEM_SINAL_PARADA = 120;
     @TestVisible
     private static final Decimal VELOCIDADE_MINIMA_EM_ROTA = 5;
     private static final String VIAGEM_EM_ANDAMENTO = 'Em_andamento';
@@ -111,7 +117,7 @@ public with sharing class FrotaMapaController {
             }
         }
 
-        Datetime limiteSinal = Datetime.now().addMinutes(-MINUTOS_SEM_SINAL);
+        Datetime agora = Datetime.now();
         List<CarretaView> views = new List<CarretaView>();
         for (Carreta__c carreta : carretas) {
             CarretaView view = new CarretaView();
@@ -121,7 +127,7 @@ public with sharing class FrotaMapaController {
             view.longitude = carreta.Ultima_Posicao__Longitude__s;
             view.velocidade = carreta.Velocidade__c ?? 0;
             view.ultimaAtualizacao = carreta.Ultima_Atualizacao__c;
-            view.status = calcularStatus(carreta.Ultima_Atualizacao__c, view.velocidade, limiteSinal);
+            view.status = calcularStatus(carreta.Ultima_Atualizacao__c, view.velocidade, agora);
             if (!carreta.Viagens__r.isEmpty()) {
                 Viagem__c viagem = carreta.Viagens__r[0];
                 view.viagemId = viagem.Id;
@@ -137,10 +143,15 @@ public with sharing class FrotaMapaController {
     }
 
     @TestVisible
-    private static String calcularStatus(Datetime ultimaAtualizacao, Decimal velocidade, Datetime limiteSinal) {
-        if (ultimaAtualizacao == null || ultimaAtualizacao < limiteSinal) {
+    private static String calcularStatus(Datetime ultimaAtualizacao, Decimal velocidade, Datetime agora) {
+        if (ultimaAtualizacao == null) {
             return 'SEM_SINAL';
         }
-        return velocidade >= VELOCIDADE_MINIMA_EM_ROTA ? 'EM_ROTA' : 'PARADA';
+        Boolean emMovimento = velocidade >= VELOCIDADE_MINIMA_EM_ROTA;
+        Integer toleranciaMinutos = emMovimento ? MINUTOS_SEM_SINAL_EM_ROTA : MINUTOS_SEM_SINAL_PARADA;
+        if (ultimaAtualizacao < agora.addMinutes(-toleranciaMinutos)) {
+            return 'SEM_SINAL';
+        }
+        return emMovimento ? 'EM_ROTA' : 'PARADA';
     }
 }

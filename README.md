@@ -27,7 +27,14 @@ Celular (Traccar Client) ou rastreador → Servidor Traccar
 | Agendamento (um job por minuto do intervalo) | `FrotaSyncScheduler` |
 | Dados do mapa e botão "Atualizar agora" | `FrotaMapaController` |
 
-Status no mapa: **Em rota** (≥ 5 km/h), **Parada**, **Sem sinal** (sem posição há mais de 15 min).
+Status no mapa, calculado pela última posição recebida:
+
+| Última posição | Situação | Vira **Sem sinal** depois de |
+|---|---|---|
+| ≥ 5 km/h | **Em rota** | 15 min sem posição nova |
+| < 5 km/h | **Parada** | 2 h sem posição nova |
+
+A tolerância é maior para carreta parada porque celular em segundo plano e sem movimento para de enviar posição para poupar bateria (medido: até 44 min de silêncio). Carreta que estava andando e some é o caso que precisa de atenção. Os limites ficam em `FrotaMapaController` (`MINUTOS_SEM_SINAL_EM_ROTA` e `MINUTOS_SEM_SINAL_PARADA`).
 
 ## Como os objetos se relacionam
 
