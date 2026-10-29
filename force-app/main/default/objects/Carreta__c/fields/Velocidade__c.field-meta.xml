@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Velocidade__c</fullName>
+    <description>Velocidade na última posição, em km/h (o Traccar envia em nós e a sincronização converte).</description>
+    <label>Velocidade (km/h)</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>1</scale>
+    <type>Number</type>
+</CustomField>

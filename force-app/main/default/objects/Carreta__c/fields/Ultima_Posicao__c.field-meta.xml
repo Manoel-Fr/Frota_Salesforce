@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ultima_Posicao__c</fullName>
+    <description>Última posição recebida do Traccar. Só a última fica gravada; não há histórico de trajeto neste objeto.</description>
+    <displayLocationInDecimal>true</displayLocationInDecimal>
+    <label>Última Posição</label>
+    <required>false</required>
+    <scale>6</scale>
+    <type>Location</type>
+</CustomField>

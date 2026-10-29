@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities><application>Frota</application><visible>true</visible></applicationVisibilities>
+    <classAccesses><apexClass>FrotaMapaController</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>FrotaSyncScheduler</apexClass><enabled>true</enabled></classAccesses>
+    <description>Gestor da frota: vê o mapa, cadastra carretas e viagens, vincula pedidos e dispara a sincronização com o Traccar.</description>
+    <externalCredentialPrincipalAccesses><enabled>true</enabled><externalCredentialPrincipal>DatagoProjects__Traccar-Traccar_Principal</externalCredentialPrincipal></externalCredentialPrincipalAccesses>
+    <fieldPermissions><editable>true</editable><field>Carreta__c.Identificador_Traccar__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Carreta__c.Ultima_Posicao__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Carreta__c.Ultima_Atualizacao__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Carreta__c.Velocidade__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Carreta__c.Ativa__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Viagem__c.Carreta__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Viagem__c.Origem__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Viagem__c.Destino__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Viagem__c.Previsao_Chegada__c</field><readable>true</readable></fieldPermissions>
+    <fieldPermissions><editable>true</editable><field>Order.Viagem__c</field><readable>true</readable></fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Frota - Gestor</label>
+    <objectPermissions><allowCreate>true</allowCreate><allowDelete>true</allowDelete><allowEdit>true</allowEdit><allowRead>true</allowRead><modifyAllRecords>false</modifyAllRecords><object>Carreta__c</object><viewAllRecords>false</viewAllRecords></objectPermissions>
+    <objectPermissions><allowCreate>true</allowCreate><allowDelete>true</allowDelete><allowEdit>true</allowEdit><allowRead>true</allowRead><modifyAllRecords>false</modifyAllRecords><object>Viagem__c</object><viewAllRecords>false</viewAllRecords></objectPermissions>
+    <tabSettings><tab>Mapa_da_Frota</tab><visibility>Visible</visibility></tabSettings>
+    <tabSettings><tab>Carreta__c</tab><visibility>Visible</visibility></tabSettings>
+    <tabSettings><tab>Viagem__c</tab><visibility>Visible</visibility></tabSettings>
+</PermissionSet>

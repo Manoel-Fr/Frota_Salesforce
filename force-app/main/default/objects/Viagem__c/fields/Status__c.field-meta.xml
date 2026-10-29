@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>Só viagens Em andamento aparecem no mapa como viagem atual da carreta.</description>
+    <label>Status</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Planejada</fullName><default>true</default><label>Planejada</label></value>
+            <value><fullName>Em_andamento</fullName><default>false</default><label>Em andamento</label></value>
+            <value><fullName>Concluida</fullName><default>false</default><label>Concluída</label></value>
+            <value><fullName>Cancelada</fullName><default>false</default><label>Cancelada</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

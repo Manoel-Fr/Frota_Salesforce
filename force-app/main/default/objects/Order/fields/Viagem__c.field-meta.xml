@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Viagem__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Viagem que transporta o pedido; a carreta vem da viagem.</description>
+    <label>Viagem</label>
+    <referenceTo>Viagem__c</referenceTo>
+    <relationshipLabel>Pedidos</relationshipLabel>
+    <relationshipName>Pedidos</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,159 @@
+<template>
+    <div class={classeRaiz}>
+        <template lwc:if={modoFrota}>
+            <aside class="painel" aria-label="Frota">
+                <header class="painel__topo">
+                    <h2 class="painel__titulo">Frota</h2>
+                    <p class="painel__subtitulo">{textoTotal}</p>
+                </header>
+
+                <div class="painel__busca">
+                    <lightning-input
+                        type="search"
+                        label="Buscar placa"
+                        variant="label-hidden"
+                        placeholder="Buscar placa ou destino"
+                        value={busca}
+                        onchange={handleBusca}
+                    ></lightning-input>
+                </div>
+
+                <div class="filtros" role="group" aria-label="Filtrar por situação">
+                    <template for:each={filtros} for:item="filtro">
+                        <button
+                            key={filtro.status}
+                            class={filtro.classe}
+                            data-status={filtro.status}
+                            aria-pressed={filtro.pressionado}
+                            onclick={handleFiltro}
+                        >
+                            <span class="filtro__ponto" aria-hidden="true"></span>
+                            <span>{filtro.label}</span>
+                            <span class="filtro__total">{filtro.total}</span>
+                        </button>
+                    </template>
+                </div>
+
+                <ul class="lista" aria-label="Carretas">
+                    <template for:each={carretasFiltradas} for:item="carreta">
+                        <li key={carreta.id}>
+                            <button
+                                class={carreta.classeItem}
+                                data-id={carreta.id}
+                                aria-pressed={carreta.selecionada}
+                                onclick={handleSelecionar}
+                            >
+                                <span class="placa" aria-label={carreta.rotuloPlaca}>
+                                    <span class="placa__faixa" aria-hidden="true">BRASIL</span>
+                                    <span class="placa__texto" aria-hidden="true">{carreta.placa}</span>
+                                </span>
+                                <span class="item__situacao">
+                                    <span class="item__ponto" aria-hidden="true"></span>
+                                    {carreta.statusLabel}
+                                </span>
+                                <span class="item__linha">
+                                    <strong class="item__velocidade">{carreta.velocidadeTexto}</strong>
+                                    <span>{carreta.atualizadoTexto}</span>
+                                </span>
+                                <span class="item__rota">{carreta.rotaTexto}</span>
+                            </button>
+                        </li>
+                    </template>
+                    <template lwc:if={semResultadoFiltro}>
+                        <li class="lista__vazia">
+                            Nenhuma carreta com esse filtro.
+                            <button class="link" onclick={handleLimparFiltros}>Limpar filtros</button>
+                        </li>
+                    </template>
+                </ul>
+
+                <footer class="painel__rodape" aria-live="polite">{textoUltimaLeitura}</footer>
+            </aside>
+        </template>
+
+        <section class="palco" aria-label="Mapa">
+            <div class="mapa" lwc:ref="mapa" lwc:dom="manual" role="region" aria-label="Mapa com a posição das carretas"></div>
+
+            <div class="controles">
+                <button class="controle" onclick={handleCentralizar} disabled={semCarretas} title="Mostrar toda a frota">
+                    <lightning-icon icon-name="utility:center_align" size="x-small" alternative-text="Mostrar toda a frota"></lightning-icon>
+                </button>
+                <button class="controle controle_texto" onclick={handleSincronizar} disabled={sincronizando}>
+                    <lightning-icon icon-name="utility:refresh" size="x-small" class={classeIconeAtualizar}></lightning-icon>
+                    <span>{textoBotaoAtualizar}</span>
+                </button>
+            </div>
+
+            <template lwc:if={carregando}>
+                <div class="aviso" role="status">
+                    <lightning-spinner alternative-text="Carregando a frota" size="small"></lightning-spinner>
+                </div>
+            </template>
+            <template lwc:elseif={erro}>
+                <div class="aviso aviso_erro" role="alert">
+                    <p class="aviso__titulo">Não foi possível mostrar a frota</p>
+                    <p>{erro}</p>
+                </div>
+            </template>
+            <template lwc:elseif={semCarretas}>
+                <div class="aviso" role="status">
+                    <p class="aviso__titulo">{mensagemVazio}</p>
+                    <p>{dicaVazio}</p>
+                </div>
+            </template>
+
+            <template lwc:if={selecionada}>
+                <article class={classeCartao} aria-live="polite" aria-label={selecionada.rotuloPlaca}>
+                    <header class="cartao__topo">
+                        <span class="placa placa_grande" aria-hidden="true">
+                            <span class="placa__faixa">BRASIL</span>
+                            <span class="placa__texto">{selecionada.placa}</span>
+                        </span>
+                        <template lwc:if={modoFrota}>
+                            <button class="cartao__fechar" onclick={handleFecharCartao} title="Fechar">
+                                <lightning-icon icon-name="utility:close" size="x-small" alternative-text="Fechar"></lightning-icon>
+                            </button>
+                        </template>
+                    </header>
+
+                    <div class="cartao__situacao">
+                        <span class="item__ponto" aria-hidden="true"></span>
+                        <span>{selecionada.statusLabel}</span>
+                        <span class="cartao__tempo">{selecionada.atualizadoTexto}</span>
+                    </div>
+
+                    <div class="cartao__velocidade">
+                        <span class="cartao__numero">{selecionada.velocidadeNumero}</span>
+                        <span class="cartao__unidade">km/h</span>
+                    </div>
+
+                    <template lwc:if={selecionada.viagemId}>
+                        <div class="viagem">
+                            <div class="viagem__rota">
+                                <span class="viagem__ponto">{selecionada.origemTexto}</span>
+                                <span class="viagem__trilho" aria-hidden="true"></span>
+                                <span class="viagem__ponto viagem__ponto_destino">{selecionada.destinoTexto}</span>
+                            </div>
+                            <dl class="viagem__dados">
+                                <div>
+                                    <dt>Chegada prevista</dt>
+                                    <dd>{selecionada.previsaoTexto}</dd>
+                                </div>
+                                <div>
+                                    <dt>Pedidos</dt>
+                                    <dd>{selecionada.quantidadePedidos}</dd>
+                                </div>
+                            </dl>
+                            <button class="link" data-id={selecionada.viagemId} onclick={handleAbrirViagem}>
+                                Abrir viagem {selecionada.viagemNumero}
+                            </button>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <p class="cartao__semviagem">Sem viagem em andamento.</p>
+                    </template>
+                </article>
+            </template>
+        </section>
+    </div>
+</template>

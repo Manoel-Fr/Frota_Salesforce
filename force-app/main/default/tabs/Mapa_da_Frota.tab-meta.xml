@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <flexiPage>Mapa_da_Frota</flexiPage>
+    <label>Mapa da Frota</label>
+    <motif>Custom98: Truck</motif>
+</CustomTab>

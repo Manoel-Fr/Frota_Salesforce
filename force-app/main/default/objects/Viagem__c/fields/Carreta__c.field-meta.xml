@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Carreta__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>Carreta que faz a viagem.</description>
+    <label>Carreta</label>
+    <referenceTo>Carreta__c</referenceTo>
+    <relationshipLabel>Viagens</relationshipLabel>
+    <relationshipName>Viagens</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>
