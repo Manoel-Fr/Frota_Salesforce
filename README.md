@@ -2,6 +2,14 @@
 
 Rastreamento de frota no Salesforce: a posição das carretas vem do [Traccar](https://www.traccar.org) e aparece num mapa (LWC + Leaflet/OpenStreetMap). Pedidos (Order) são vinculados a uma Viagem, e a viagem a uma Carreta.
 
+![Guia Mapa da Frota no app Frota: painel com as carretas à esquerda e as placas no mapa](docs/images/mapa-da-frota.png)
+
+*Guia **Mapa da Frota**: painel com busca e filtros por situação; cada carreta aparece no mapa como uma placa Mercosul.*
+
+![Cartão da carreta selecionada com velocidade, rota da viagem, chegada prevista e pedidos](docs/images/cartao-da-carreta.png)
+
+*Ao selecionar uma carreta, o mapa se aproxima e o cartão mostra a situação, a velocidade e a viagem em andamento (origem → destino, chegada prevista e quantidade de pedidos).*
+
 ## Como funciona
 
 ```
